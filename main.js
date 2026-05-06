@@ -116,7 +116,7 @@ function update (dt) {
         const hitPos = ((ball.y + ball.size / 2) - (leftPaddle.y + leftPaddle.height / 2)) / (leftPaddle.height / 2);
 
         //Set new velocity based on hit position
-        const speed = Math.hypot(ball.vx, ball.vy); //current total speed
+        const speed = Math.min(Math.hypot(ball.vx, ball.vy) * 1.05, 900);
         const maxBounceAngle = Math.PI / 4; //45 degrees max
         const bounceAngle = hitPos * maxBounceAngle
 
@@ -129,7 +129,7 @@ function update (dt) {
 
         const hitPos = ((ball.y + ball.size / 2) - (rightPaddle.y + rightPaddle.height / 2)) / (rightPaddle.height / 2);
         
-        const speed = Math.hypot(ball.vx, ball.vy);
+         const speed = Math.min(Math.hypot(ball.vx, ball.vy) * 1.05, 900);
         const maxBounceAngle = Math.PI / 4; 
         const bounceAngle = hitPos * maxBounceAngle
 
@@ -195,7 +195,8 @@ function update (dt) {
     if(gameState == 'gameOver') {
         leftPaddle.y = canvas.height / 2 - 50;
         rightPaddle.y = canvas.height / 2 - 50;
-        ball.y = canvas.height / 2 - ball.size;
+        ball.vx = 0;
+        ball.vy = 0;
 
         //Listen for restart
         if (keys[' ']) {
