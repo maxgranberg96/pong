@@ -77,14 +77,32 @@ function update (dt) {
         ball.vy *= -1;
     }
 
-    // Ball collision with paddles
+    // Ball collision with left paddle
     if (ballHitsPaddle(ball, leftPaddle)) {
         ball.x = leftPaddle.x + leftPaddle.width; //Snap ball to right edge of paddle
-        ball.vx *= -1;
+
+        //Calculate where on the paddle the ball hit (-1 = top, 0 = middle, 1 = bottom)
+        const hitPos = ((ball.y + ball.size / 2) - (leftPaddle.y + leftPaddle.height / 2)) / (leftPaddle.height / 2);
+
+        //Set new velocity based on hit position
+        const speed = Math.hypot(ball.vx, ball.vy); //current total speed
+        const maxBounceAngle = Math.PI / 4; //45 degrees max
+        const bounceAngle = hitPos * maxBounceAngle
+
+        ball.vx = Math.cos(bounceAngle) * speed;
+        ball.vy = Math.sin(bounceAngle) * speed;
     }
     if (ballHitsPaddle(ball, rightPaddle)) {
         ball.x = rightPaddle.x - ball.size; //Snap ball to left edge of paddle
-        ball.vx *= -1;
+
+        const hitPos = ((ball.y + ball.size / 2) - (rightPaddle.y + rightPaddle.height / 2)) / (rightPaddle.height / 2);
+        
+        const speed = Math.hypot(ball.vx, ball.vy);
+        const maxBounceAngle = Math.PI / 4; 
+        const bounceAngle = hitPos * maxBounceAngle
+
+        ball.vx = -Math.cos(bounceAngle) * speed;
+        ball.vy = Math.sin(bounceAngle) * speed;
     }
 
     // Ball off screen - score and reset
