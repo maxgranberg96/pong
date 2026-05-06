@@ -34,6 +34,17 @@ function ballHitsPaddle (ball, paddle) {
 }
 
 
+function resetBall (direction) {
+    ball.x = canvas.width / 2 - ball.size / 2;
+    ball.y = canvas.height / 2 - ball.size / 2;
+    ball.vx = 300 * direction // direction is +1 (right) or -1 (left)
+    ball.vy = (Math.random() - 0.5) * 400; //Random between -200 and 200
+}
+
+//Scores
+let leftScore = 0;
+let rightScore = 0;
+
 // Track which keys are currently pressed
 const keys = {};
 
@@ -44,6 +55,8 @@ window.addEventListener('keydown', (e) => {
 window.addEventListener('keyup', (e) => {
     keys[e.key.toLowerCase()] = false;
 });
+
+
 
 let lastTime = 0;
 
@@ -74,15 +87,15 @@ function update (dt) {
         ball.vx *= -1;
     }
 
-    // Ball off screen - reset to center
-    if (ball.x + ball.size < 0 || ball.x > canvas.width) {
-        ball.x = canvas.width / 2;
-        ball.y = canvas.height / 2
-        //Keep Velocity so the ball keeps moving in the same general direction
+    // Ball off screen - score and reset
+    if (ball.x + ball.size < 0 ) {
+        rightScore++;
+        resetBall(1);
     }
-
-
-
+    if (ball.x > canvas.width) {
+        leftScore++;
+        resetBall(-1);
+    }
 
     //Left paddle movement
     if (keys['w']) {
@@ -130,6 +143,15 @@ function render () {
         ctx.fillRect(canvas.width / 2 - 1, y, 2, 10);
     }
 
+    // Draw score
+    ctx.fillStyle = '#fff';
+    ctx.font = '64px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(leftScore, canvas.width / 4, 80);
+    ctx.fillText(rightScore, canvas.width * 3 / 4, 80);
+
+
+
     //Draw game objects here
 
     //Ball
@@ -154,4 +176,5 @@ function loop (timestamp) {
     requestAnimationFrame(loop);
 }
 
+resetBall(Math.random() < 0.5 ? -1 : 1);
 requestAnimationFrame(loop);
