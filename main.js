@@ -41,6 +41,10 @@ function resetBall (direction) {
     ball.vy = (Math.random() - 0.5) * 400; //Random between -200 and 200
 }
 
+let gameState = 'playing'; // playing or gameOver
+let winner = null; // 'Left' or 'Right' when game ends
+const winningScore = 5;  //First to 5 wins
+
 //Scores
 let leftScore = 0;
 let rightScore = 0;
@@ -105,16 +109,6 @@ function update (dt) {
         ball.vy = Math.sin(bounceAngle) * speed;
     }
 
-    // Ball off screen - score and reset
-    if (ball.x + ball.size < 0 ) {
-        rightScore++;
-        resetBall(-1);
-    }
-    if (ball.x > canvas.width) {
-        leftScore++;
-        resetBall(1);
-    }
-
     //Left paddle movement
     if (keys['w']) {
         leftPaddle.y -= leftPaddle.speed * dt;
@@ -145,6 +139,42 @@ function update (dt) {
     }
     if (rightPaddle.y + rightPaddle.height > canvas.height) {
         rightPaddle.y = canvas.height - rightPaddle.height
+    }
+
+    // Ball off screen - score and reset
+    if (ball.x + ball.size < 0 ) {
+        rightScore++;
+        resetBall(-1);
+    }
+    if (ball.x > canvas.width) {
+        leftScore++;
+        resetBall(1);
+    }
+
+    // CHeck for winner
+    if (leftScore >= winningScore) {
+        winner = 'Left';
+        gameState = 'gameOver';
+    }
+    if (rightScore >= winningScore) {
+        winner = 'Right';
+        gameState = 'gameOver';
+    }
+
+    if(gameState == 'gameOver') {
+        leftPaddle.y = canvas.height / 2 - 50;
+        rightPaddle.y = canvas.height / 2 - 50;
+        ball.y = canvas.height / 2 - ball.size;
+
+        //Listen for restart
+        if (keys[' ']) {
+            leftScore = 0;
+            rightScore = 0;
+            winner = null;
+            gameState = 'playing';
+            resetBall(Math.random() < 0.5 ? -1 : 1);
+        }
+        return; //Skip all normal game logic while game is over
     }
 
 
@@ -183,6 +213,23 @@ function render () {
     //Right paddle
     ctx.fillStyle = '#fff';
     ctx.fillRect(rightPaddle.x, rightPaddle.y, rightPaddle.width, rightPaddle.height)
+
+
+    if (gameState == 'gameOver') {
+        //Semitransparent dark overlay
+        ctx.fillStyle = 'rgba(0,0,0,0.7)';
+        ctx.fillRect(0,0,canvas.width, canvas.height);
+
+        //Win message
+        ctx.fillStyle ='#fff';
+        ctx.font = '48px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(winner + ' player wins!', canvas.width / 2, canvas.height / 2 - 20);
+
+        //Restart prompt
+        ctx.font = '24px monospace';
+        ctx.fillText('Press SPACE to play again', canvas.width / 2, canvas.height /2 + 30);
+    }
 }
 
 function loop (timestamp) {
