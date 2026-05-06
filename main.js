@@ -13,6 +13,11 @@ function playSound(sound) {
     sound.play().catch(() => {}); //ignore promise rejection (browser autoplay policy)
 }
 
+let gameState = 'menu'; // menu, playing or gameOver
+let winner = null; // 'Left' or 'Right' when game ends
+const winningScore = 5;  //First to 5 wins
+
+
 const leftPaddle = {
     x:30,
     y: canvas.height / 2 - 50,
@@ -53,10 +58,6 @@ function resetBall (direction) {
     ball.vy = (Math.random() - 0.5) * 400; //Random between -200 and 200
 }
 
-let gameState = 'playing'; // playing or gameOver
-let winner = null; // 'Left' or 'Right' when game ends
-const winningScore = 5;  //First to 5 wins
-
 //Scores
 let leftScore = 0;
 let rightScore = 0;
@@ -78,6 +79,18 @@ let lastTime = 0;
 
 //Game logic here!!
 function update (dt) {
+
+    if (gameState === 'menu') {
+        if (keys[' ']) {
+            leftScore = 0;
+            rightScore = 0;
+            leftPaddle.y = canvas.height / 2 - 50;
+            rightPaddle.y = canvas.height / 2 - 50;
+            gameState = 'playing';
+            resetBall(Math.random() < 0.5 ? -1 : 1);
+        }
+        return;
+    }
 
     // Move ball
     ball.x += ball.vx * dt;
@@ -247,6 +260,24 @@ function render () {
         //Restart prompt
         ctx.font = '24px monospace';
         ctx.fillText('Press SPACE to play again', canvas.width / 2, canvas.height /2 + 30);
+    }
+
+    if (gameState === 'menu') {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+        ctx.fillStyle = '#fff';
+        ctx.font = '72px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('PONG', canvas.width / 2, canvas.height / 2 - 80);
+  
+        ctx.font = '20px monospace';
+        ctx.fillText('Left player:  W / S', canvas.width / 2, canvas.height / 2);
+        ctx.fillText('Right player:  ↑ / ↓', canvas.width / 2, canvas.height / 2 + 30);
+        ctx.fillText('First to 5 wins', canvas.width / 2, canvas.height / 2 + 60);
+  
+        ctx.font = '24px monospace';
+        ctx.fillText('Press SPACE to start', canvas.width / 2, canvas.height / 2 + 120);
     }
 }
 
