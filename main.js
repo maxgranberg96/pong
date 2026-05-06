@@ -1,6 +1,18 @@
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 
+// Audio
+const sounds = {
+    paddle: new Audio('assets/sounds/paddle.wav'),
+    wall: new Audio('assets/sounds/wall.wav'),
+    score: new Audio('assets/sounds/score.wav')
+};
+
+function playSound(sound) {
+    sound.currentTime = 0; // rewind to start in case it's already playing
+    sound.play().catch(() => {}); //ignore promise rejection (browser autoplay policy)
+}
+
 const leftPaddle = {
     x:30,
     y: canvas.height / 2 - 50,
@@ -75,10 +87,12 @@ function update (dt) {
     if (ball.y < 0) {
         ball.y = 0;
         ball.vy *= -1;
+        playSound(sounds.wall);
     }
     if (ball.y + ball.size > canvas.height) {
         ball.y = canvas.height - ball.size;
         ball.vy *= -1;
+        playSound(sounds.wall);
     }
 
     // Ball collision with left paddle
@@ -95,6 +109,7 @@ function update (dt) {
 
         ball.vx = Math.cos(bounceAngle) * speed;
         ball.vy = Math.sin(bounceAngle) * speed;
+        playSound(sounds.paddle);
     }
     if (ballHitsPaddle(ball, rightPaddle)) {
         ball.x = rightPaddle.x - ball.size; //Snap ball to left edge of paddle
@@ -107,6 +122,7 @@ function update (dt) {
 
         ball.vx = -Math.cos(bounceAngle) * speed;
         ball.vy = Math.sin(bounceAngle) * speed;
+        playSound(sounds.paddle);
     }
 
     //Left paddle movement
@@ -144,10 +160,12 @@ function update (dt) {
     // Ball off screen - score and reset
     if (ball.x + ball.size < 0 ) {
         rightScore++;
+        playSound(sounds.score);
         resetBall(-1);
     }
     if (ball.x > canvas.width) {
         leftScore++;
+        playSound(sounds.score);
         resetBall(1);
     }
 
