@@ -9,10 +9,37 @@ const leftPaddle = {
     speed: 400 //pixels per second
 };
 
+// Track which keys are currently pressed
+const keys = {};
+
+window.addEventListener('keydown', (e) => {
+    keys[e.key.toLowerCase()] = true;
+});
+
+window.addEventListener('keyup', (e) => {
+    keys[e.key.toLowerCase()] = false;
+});
+
 let lastTime = 0;
 
+//Game logic here
 function update (dt) {
-    //Game logic here
+    //Left paddle movement
+    if (keys['w']) {
+        leftPaddle.y -= leftPaddle.speed * dt;
+    }
+    if (keys['s']) {
+        leftPaddle.y += leftPaddle.speed * dt;
+    }
+
+    //Clamp paddle to canvas bound
+    if (leftPaddle.y < 0) {
+        leftPaddle.y = 0;
+    }
+    if (leftPaddle.y + leftPaddle.height > canvas.height) {
+        leftPaddle.y = canvas.height - leftPaddle.height
+    }
+
 }
 
 function render () {
