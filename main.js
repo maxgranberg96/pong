@@ -1,6 +1,14 @@
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 
+const leftPaddle = {
+    x:30,
+    y: canvas.height / 2 - 50,
+    width: 12,
+    height: 100,
+    speed: 400 //pixels per second
+};
+
 let lastTime = 0;
 
 function update (dt) {
@@ -19,6 +27,10 @@ function render () {
     }
 
     //Draw game objects here
+
+    //Left paddle
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(leftPaddle.x, leftPaddle.y, leftPaddle.width, leftPaddle.height);
 }
 
 function loop (timestamp) {
