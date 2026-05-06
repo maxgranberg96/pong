@@ -25,6 +25,15 @@ const ball = {
     vy: 200 // vertical velocity, pixels per second
 };
 
+// Returns true if ball overlaps with paddle
+function ballHitsPaddle (ball, paddle) {
+    return ball.x < paddle.x + paddle.width &&
+           ball.x + ball.size > paddle.x &&
+           ball.y < paddle.y + paddle.height &&
+           ball.y + ball.size > paddle.y 
+}
+
+
 // Track which keys are currently pressed
 const keys = {};
 
@@ -55,18 +64,26 @@ function update (dt) {
         ball.vy *= -1;
     }
 
-    // Ball bounce off left and right walls (temporary well replace with paddle)
-    if (ball.x < 0) {
-        ball.x = 0;
+    // Ball collision with paddles
+    if (ballHitsPaddle(ball, leftPaddle)) {
+        ball.x = leftPaddle.x + leftPaddle.width; //Snap ball to right edge of paddle
         ball.vx *= -1;
     }
-    if(ball.x + ball.size > canvas.width) {
-        ball.x = canvas.width - ball.size;
-        ball.vx *= -1; 
+    if (ballHitsPaddle(ball, rightPaddle)) {
+        ball.x = rightPaddle.x - ball.size; //Snap ball to left edge of paddle
+        ball.vx *= -1;
+    }
+
+    // Ball off screen - reset to center
+    if (ball.x + ball.size < 0 || ball.x > canvas.width) {
+        ball.x = canvas.width / 2;
+        ball.y = canvas.height / 2
+        //Keep Velocity so the ball keeps moving in the same general direction
     }
 
 
-    
+
+
     //Left paddle movement
     if (keys['w']) {
         leftPaddle.y -= leftPaddle.speed * dt;
