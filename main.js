@@ -22,7 +22,7 @@ window.addEventListener('keyup', (e) => {
 
 let lastTime = 0;
 
-//Game logic here!
+//Game logic here!!
 function update (dt) {
     
     //Left paddle movement
