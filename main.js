@@ -90,11 +90,11 @@ function update (dt) {
     // Ball off screen - score and reset
     if (ball.x + ball.size < 0 ) {
         rightScore++;
-        resetBall(1);
+        resetBall(-1);
     }
     if (ball.x > canvas.width) {
         leftScore++;
-        resetBall(-1);
+        resetBall(1);
     }
 
     //Left paddle movement
