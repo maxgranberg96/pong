@@ -9,6 +9,14 @@ const leftPaddle = {
     speed: 400 //pixels per second
 };
 
+const rightPaddle = {
+    x: canvas.width - 30 - 12,
+    y: canvas.height / 2 - 50,
+    width: 12,
+    height: 100,
+    speed: 400
+}
+
 const ball = {
     x: canvas.width / 2,
     y: canvas.height / 2,
@@ -75,6 +83,23 @@ function update (dt) {
         leftPaddle.y = canvas.height - leftPaddle.height
     }
 
+    //Right paddle movement
+    if (keys['arrowup']) {
+        rightPaddle.y -= rightPaddle.speed * dt;
+    }
+    if (keys['arrowdown']) {
+        rightPaddle.y += rightPaddle.speed * dt;
+    }
+
+    //Clamp paddle to canvas bound
+    if (rightPaddle.y < 0) {
+        rightPaddle.y = 0;
+    }
+    if (rightPaddle.y + rightPaddle.height > canvas.height) {
+        rightPaddle.y = canvas.height - rightPaddle.height
+    }
+
+
 }
 
 function render () {
@@ -97,6 +122,10 @@ function render () {
     //Left paddle
     ctx.fillStyle = '#fff';
     ctx.fillRect(leftPaddle.x, leftPaddle.y, leftPaddle.width, leftPaddle.height);
+
+    //Right paddle
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(rightPaddle.x, rightPaddle.y, rightPaddle.width, rightPaddle.height)
 }
 
 function loop (timestamp) {
