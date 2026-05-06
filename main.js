@@ -9,6 +9,14 @@ const leftPaddle = {
     speed: 400 //pixels per second
 };
 
+const ball = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    size: 12,
+    vx: 300, // horizontal velocity, pixels per second
+    vy: 200 // vertical velocity, pixels per second
+};
+
 // Track which keys are currently pressed
 const keys = {};
 
@@ -24,6 +32,32 @@ let lastTime = 0;
 
 //Game logic here!!
 function update (dt) {
+
+    // Move ball
+    ball.x += ball.vx * dt;
+    ball.y += ball.vy * dt;
+
+    // Ball bounce off top and bottom walls
+    if (ball.y < 0) {
+        ball.y = 0;
+        ball.vy *= -1;
+    }
+    if (ball.y + ball.size > canvas.height) {
+        ball.y = canvas.height - ball.size;
+        ball.vy *= -1;
+    }
+
+    // Ball bounce off left and right walls (temporary well replace with paddle)
+    if (ball.x < 0) {
+        ball.x = 0;
+        ball.vx *= -1;
+    }
+    if(ball.x + ball.size > canvas.width) {
+        ball.x = canvas.width - ball.size;
+        ball.vx *= -1; 
+    }
+
+
     
     //Left paddle movement
     if (keys['w']) {
@@ -55,6 +89,10 @@ function render () {
     }
 
     //Draw game objects here
+
+    //Ball
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(ball.x, ball.y, ball.size, ball.size);
 
     //Left paddle
     ctx.fillStyle = '#fff';
